@@ -1,0 +1,17 @@
+[Unit]
+Description=--Proton OpenVPN Service--
+StartLimitIntervalSec=5
+StartLimitBurst=5
+
+[Service]
+Type=fork
+WorkingDirectory=/opt/openvpn-proton/
+ExecStart=/opt/openvpn-proton/service.sh
+ExecReload=/opt/openvpn-proton/service.sh restart
+ExecStop=/opt/openvpn-proton/service.sh stop
+Restart=always
+RestartSec=4
+RemainAfterExit=no
+
+[Install]
+WantedBy=multi-user.target

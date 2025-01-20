@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Exec=/opt/openvpn-proton/vpn_gui.py
+X-GNOME-Autostart-enabled=true
+NoDisplay=false
+Hidden=false
+Name[en_US]=Proton VPN
+Comment[en_US]=Openvpn-proton project's control GUI.
+X-GNOME-Autostart-Delay=0
+Icon=/opt/openvpn-proton/icons/vpn_brown_mine.png

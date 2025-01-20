@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Proton VPN
+Exec=/opt/openvpn-proton/vpn_gui.py
+Comment=
+Terminal=false
+PrefersNonDefaultGPU=false
+Icon=/opt/openvpn-proton/icons/vpn_brown_mine.png
+Type=Application
