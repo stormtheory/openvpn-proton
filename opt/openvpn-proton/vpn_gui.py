@@ -90,71 +90,32 @@ def relocate(FILE):
     subprocess.run(["sed -i '/run/c\\run {}' {}".format(FILE,HOME_CONFIG)], shell=True, stdout=subprocess.PIPE)
     vpn_restart()
 
-def locate_chicago():
-    relocate('us_chicago.ovpn')
+def locate_chicago19():
+    relocate('us-chicago-19.ovpn')
 
-def locate_MO():
-    relocate('us_missouri.ovpn')
+def locate_chicago21():
+    relocate('us-chicago-21.ovpn')
 
-def locate_east():
-    relocate('us_east.ovpn')
+def locate_chicago22():
+    relocate('us-chicago-22.ovpn')
 
-def locate_atlanta():
-    relocate('us_atlanta.ovpn')
+def locate_random_USA():
+    relocate('us-random.udp.ovpn')
 
-def locate_DC():
-    relocate('us_washington_dc.ovpn')
+def locate_random_united_kingdom():
+    relocate('uk.random.udp.ovpn')
 
-def locate_switzerland():
-    relocate('switzerland.ovpn')
-
-def locate_netherlands():
-    relocate('nl_amsterdam.ovpn')
-
-def locate_london():
-    relocate('uk_london.ovpn')
-
-def locate_Ireland():
-    relocate('ireland.ovpn')
-
-def locate_FL():
-    relocate('us_florida.ovpn')
-
-def locate_IN():
-    relocate('us_indiana.ovpn')
-
-def locate_MI():
-    relocate('us_michigan.ovpn')
-
-def locate_sydney():
-    relocate('aus-sydney.ovpn')
-
-def locate_melbourne():
-    relocate('aus_melbourne.ovpn')
-
-def locate_brisbane():
-    relocate('au_brisbane.ovpn')
-
-def locate_new_zealand():
-    relocate('new_zealand.ovpn')
-
-def locate_costa_rica():
-    relocate('costa_rica.ovpn')
-
-def locate_HI():
-    relocate('us_honolulu.ovpn')
-
-def locate_west():
-    relocate('us_west.ovpn')
+def locate_random_switzerland():
+    relocate('switzerland.random.udp.ovpn')
 
 global CHOICE_LOCATIONS
-EAST_LOCATIONS = pystray.Menu(Item("East", locate_east), Item("Atlanta", locate_atlanta), Item("Wash DC", locate_DC), Item("Florida", locate_FL))
-CENTRAL_LOCATIONS = pystray.Menu(Item("Missouri", locate_MO), Item("Indiana", locate_IN), Item("Michigan", locate_MI), Item("Chicago", locate_chicago))
-WEST_LOCATIONS = pystray.Menu(Item("West", locate_west), Item("Hawaii", locate_HI))
-US_LOCATIONS = pystray.Menu(Item("CENTRAL", CENTRAL_LOCATIONS), Item("EAST", EAST_LOCATIONS), Item("WEST", WEST_LOCATIONS))
-OCEANIA_LOCATIONS = pystray.Menu(Item("Sydney", locate_sydney), Item("Melbourne", locate_melbourne), Item("Brisbane", locate_brisbane), Item("New Zealand", locate_new_zealand))
-EUROPE_LOCATIONS = pystray.Menu(Item("Switzerland", locate_switzerland), Item("Netherlands", locate_netherlands), Item("UK London", locate_london), Item("Ireland", locate_Ireland))
-CHOICE_LOCATIONS = pystray.Menu(Item("US", US_LOCATIONS), Item("EUROPE", EUROPE_LOCATIONS), Item("OCEANIA", OCEANIA_LOCATIONS), Item("Costa Rica", locate_costa_rica))
+#EAST_LOCATIONS = pystray.Menu(Item("East", locate_east), Item("Atlanta", locate_atlanta), Item("Wash DC", locate_DC), Item("Florida", locate_FL))
+CENTRAL_LOCATIONS = pystray.Menu(Item("Chicago 19", locate_chicago19), Item("Chicago 21", locate_chicago21), Item("Chicago 22", locate_chicago22))
+#WEST_LOCATIONS = pystray.Menu(Item("West", locate_west), Item("Hawaii", locate_HI))
+US_LOCATIONS = pystray.Menu(Item("US Random", locate_random_USA), Item("CENTRAL", CENTRAL_LOCATIONS))
+#OCEANIA_LOCATIONS = pystray.Menu(Item("Sydney", locate_sydney), Item("Melbourne", locate_melbourne), Item("Brisbane", locate_brisbane), Item("New Zealand", locate_new_zealand))
+EUROPE_LOCATIONS = pystray.Menu(Item("Switzerland Random", locate_random_switzerland), Item("UK Random", locate_random_united_kingdom))
+CHOICE_LOCATIONS = pystray.Menu(Item("US", US_LOCATIONS), Item("EUROPE", EUROPE_LOCATIONS))
 
 def THERE_ONLY_CAN_BE_ONE():
   global EXIT_PYTHON
