@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 cd "$(dirname "$0")"
 
-APP_NAME='openvpn-pia-client_'
+APP_NAME='openvpn-proton-ghost-client_'
 CONTROL_PATH=$(find ./ -name 'control')
 VERS=$(grep 'Version:' $CONTROL_PATH|awk '{print $2}')
 DIR_NAME=$(echo "$APP_NAME$VERS"_arch)
