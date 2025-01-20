@@ -1,0 +1,21 @@
+#!/usr/bin/bash
+
+SERVICE_NAME=proton-vpn-ghost.service
+SUDO_FILE=/etc/sudoers.d/openvpn-proton
+
+
+unlink /opt/openvpn-proton/proton.conf
+
+
+if [ -f $SUDO_FILE ];then
+	chmod 640 $SUDO_FILE
+	rm $SUDO_FILE
+fi
+
+echo "Handling Service"
+systemctl disable $SERVICE_NAME
+systemctl stop $SERVICE_NAME
+rm /etc/systemd/system/$SERVICE_NAME
+systemctl daemon-reload
+
+exit 0
