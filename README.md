@@ -13,7 +13,7 @@ A non-proprietary, open source, small but mighty Proton Ghost client with System
 5) Checks to make sure your connection is working and your Public IP has changed.
 6) Persistent settings and Default settings.
 7) Only when ran as non-privileged user will the client reach out using 'curl ipinfo.io/ip' to pull your NEW public IP address to compare and alert you if your public IP did not change or is not what is expected. **This will soon be able to be disabled**
-8) Very light with only ~600 lines of code plus comments and no unexplained network traffic, not listed above. No hidden privacy issues and can be fully audit-able by anyone.
+8) Very light with only ~600 lines of code plus comments and no unexplained network traffic, not listed above. No hidden privacy issues and can be fully audited by anyone.
 
 # Limitation
 1) Only one computer on a network per VPN location. For example: two computers at your home can't be both connected to Chicago's Proton Server from the same network at the same time. This seems to be an issue with openvpn and Proton, still looking into the issue.
