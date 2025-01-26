@@ -5,7 +5,7 @@ Maintainer: StormTheory <stormtheory42@protonmail.com>
 Website: https://github.com/StormTheory/openvpn-proton
 Homepage: https://github.com/StormTheory/openvpn-proton
 Installed-Size: 376 
-Version: 250120-1
+Version: 250126-1
 Depends: openvpn (>= 2.4),bash,python3
 Architecture: all
 Section: admin
