@@ -12,6 +12,8 @@ A non-proprietary, open source, small but mighty Proton Ghost client with System
 4) Allows normal LAN traffic
 5) Checks to make sure your connection is working and your Public IP has changed.
 6) Persistent settings and Default settings.
+7) Only when ran as non-privileged user will the client reach out using 'curl ipinfo.io/ip' to pull your NEW public IP address to compare and alert you if your public IP did not change or is not what is expected. **This will soon be able to be disabled**
+8) Very light with only ~600 lines of code plus comments and no unexplained network traffic, not listed above. No hidden privacy issues and can be fully audit-able by anyone.
 
 # Limitation
 1) Only one computer on a network per VPN location. For example: two computers at your home can't be both connected to Chicago's Proton Server from the same network at the same time. This seems to be an issue with openvpn and Proton, still looking into the issue.
@@ -31,9 +33,9 @@ Creates a service proton-vpn-ghost.service and two files in /etc/openvpn/proton-
 # INSTALL
 1) Download the latest released .deb package file off of github and install on your system.
 
-		sudo apt deb openvpn-pia-client*.deb
+		sudo apt deb openvpn-proton-ghost-client*.deb
 
-	Add your username and password for PIA in /etc/openvpn/pia-creds. This file can only be read by your local root user. Account information can be found at https://account.protonvpn.com/login
+	Add your username and password for Proton in /etc/openvpn/proton-creds. This file can only be read by your local root user. Account information can be found at https://account.protonvpn.com/login
 
 	NOTE: Pystray is a dependant for this program. This can be done by running command: 'pip install pystray' or 'apt install python3-pystray' depends on your distro.
 
