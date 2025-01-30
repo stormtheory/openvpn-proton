@@ -119,6 +119,16 @@ US_LOCATIONS = pystray.Menu(Item("US Random", locate_random_USA), Item("CENTRAL"
 EUROPE_LOCATIONS = pystray.Menu(Item("Switzerland Random", locate_random_switzerland), Item("UK Random", locate_random_united_kingdom))
 CHOICE_LOCATIONS = pystray.Menu(Item("US", US_LOCATIONS), Item("EUROPE", EUROPE_LOCATIONS))
 
+def exit_app(icon, item):
+    print('Exit called')
+    global EXIT_PYTHON
+    EXIT_PYTHON = 'TRUE'
+    sys.exit(0)
+
+global EXIT_OPTION
+EXIT_OPTION = pystray.Menu(Item("Exit System Tray App", exit_app))
+
+
 def THERE_ONLY_CAN_BE_ONE():
   global EXIT_PYTHON
   RUNNING_TEST = subprocess.run(["ps -ef|grep python3|grep './{}'|grep -v grep|wc -l".format(SCRIPT)], shell=True, stdout=subprocess.PIPE).stdout
@@ -176,7 +186,7 @@ def service_status(qservice):
                     
                     LOCATION = find_config_distination()
                     tray_notifation(APP_NAME, 'Online ' + LOCATION)
-                    systray.menu = pystray.Menu(Item("Turn Off", vpn_off), Item('Change Location', CHOICE_LOCATIONS), Item(LOCATION, btn_return), Item("Exit", exit_app))
+                    systray.menu = pystray.Menu(Item("Turn Off", vpn_off), Item('Change Location', CHOICE_LOCATIONS), Item(LOCATION, btn_return), Item("Exit", EXIT_OPTION))
                     SLEEP = 2
                         
                     logging.debug(VPN_DEV)
@@ -228,10 +238,10 @@ def service_status(qservice):
                         ETH_IP = subprocess.run(["ifconfig tun0 |grep 'inet'|grep -v inet6|awk '{print $2}'"], shell=True, stdout=subprocess.PIPE).stdout.decode('ascii').rstrip('\r\n')
                         logging.debug(ETH_IP)
                         LOCATION = find_config_distination()
-                        systray.menu = pystray.Menu(Item("Turn Off", vpn_off), Item('Change Location', CHOICE_LOCATIONS), Item(LOCATION, btn_return), Item('Public IP: ' + EXT_IP, btn_return), Item('LAN: ' + ETH_IP, btn_return), Item("Exit", exit_app))
+                        systray.menu = pystray.Menu(Item("Turn Off", vpn_off), Item('Change Location', CHOICE_LOCATIONS), Item(LOCATION, btn_return), Item('Public IP: ' + EXT_IP, btn_return), Item('LAN: ' + ETH_IP, btn_return), Item("Exit", EXIT_OPTION))
                         ### Look up Cipher level
                         CIPHER_LEVEL = subprocess.run(["grep cipher /opt/openvpn-proton/proton.conf|awk '{print $2}'"], shell=True, stdout=subprocess.PIPE).stdout.decode('ascii').rstrip('\r\n')
-                        systray.menu = pystray.Menu(Item("Turn Off", vpn_off), Item('Change Location', CHOICE_LOCATIONS), Item(LOCATION, btn_return), Item('Public IP: ' + EXT_IP, btn_return), Item('LAN: ' + ETH_IP, btn_return), Item(CIPHER_LEVEL, btn_return), Item("Exit", exit_app))
+                        systray.menu = pystray.Menu(Item("Turn Off", vpn_off), Item('Change Location', CHOICE_LOCATIONS), Item(LOCATION, btn_return), Item('Public IP: ' + EXT_IP, btn_return), Item('LAN: ' + ETH_IP, btn_return), Item(CIPHER_LEVEL, btn_return), Item("Exit", EXIT_OPTION))
 
             else:
                 if service_state != 'offline':
@@ -239,18 +249,12 @@ def service_status(qservice):
                     icon_change('brown')
                     service_state = 'offline'
                     LOCATION = find_config_distination()
-                    systray.menu = pystray.Menu(Item("Turn On", vpn_restart), Item('Change Location', CHOICE_LOCATIONS), Item(LOCATION, btn_return), Item("Exit", exit_app))
+                    systray.menu = pystray.Menu(Item("Turn On", vpn_restart), Item('Change Location', CHOICE_LOCATIONS), Item(LOCATION, btn_return), Item("Exit", EXIT_OPTION))
                     time.sleep(2)
                     tray_notifation(APP_NAME, 'Offline')
                     SLEEP = 5
         except:
             continue
-            
-def exit_app(icon, item):
-    print('Exit called')
-    global EXIT_PYTHON
-    EXIT_PYTHON = 'TRUE'
-    sys.exit(0)
 
 def vpn_off():
     subprocess.run(["timeout 5 sudo systemctl stop {}".format(SERVICE)], shell=True, stdout=subprocess.PIPE)
@@ -298,7 +302,7 @@ def SystemTrayIcon():
     print('system tray')
     print(CHOICE_LOCATIONS)
     icon = PIL.Image.open(ICON_IMAGE_PURPLE)
-    smenu = pystray.Menu(Item("Off", vpn_off), Item('Change Location', CHOICE_LOCATIONS), Item("Restart", vpn_restart), Item("Exit Display App", exit_app))
+    smenu = pystray.Menu(Item("Off", vpn_off), Item('Change Location', CHOICE_LOCATIONS), Item("Restart", vpn_restart), Item("Exit", EXIT_OPTION))
     global systray
     systray = pystray.Icon(name=APP_NAME, icon=icon, title='VPN', menu=smenu)
     try:
