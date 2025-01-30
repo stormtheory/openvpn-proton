@@ -298,7 +298,7 @@ def SystemTrayIcon():
     print('system tray')
     print(CHOICE_LOCATIONS)
     icon = PIL.Image.open(ICON_IMAGE_PURPLE)
-    smenu = pystray.Menu(Item("Off", vpn_off), Item('Change Location', CHOICE_LOCATIONS), Item("Restart", vpn_restart), Item("Exit", exit_app))
+    smenu = pystray.Menu(Item("Off", vpn_off), Item('Change Location', CHOICE_LOCATIONS), Item("Restart", vpn_restart), Item("Exit Display App", exit_app))
     global systray
     systray = pystray.Icon(name=APP_NAME, icon=icon, title='VPN', menu=smenu)
     try:
