@@ -33,6 +33,8 @@ ICON_IMAGE_RED = '/opt/openvpn-proton/icons/vpn_red_mine.png'
 ICON_IMAGE_BROWN = '/opt/openvpn-proton/icons/vpn_brown_mine.png'
 ICON_IMAGE_PURPLE = '/opt/openvpn-proton/icons/vpn_purple_mine.png'
 
+IP_COMPARE = 'Disabled' #Enabled/Disabled
+
 # Python COLORS
 class pcolors:
     BGCOLOR = '#2B3856'
@@ -116,6 +118,16 @@ US_LOCATIONS = pystray.Menu(Item("US Random", locate_random_USA), Item("CENTRAL"
 EUROPE_LOCATIONS = pystray.Menu(Item("Switzerland Random", locate_random_switzerland), Item("UK Random", locate_random_united_kingdom))
 CHOICE_LOCATIONS = pystray.Menu(Item("US", US_LOCATIONS), Item("EUROPE", EUROPE_LOCATIONS))
 
+def exit_app(icon, item):
+    print('Exit called')
+    global EXIT_PYTHON
+    EXIT_PYTHON = 'TRUE'
+    sys.exit(0)
+
+global EXIT_OPTION
+EXIT_OPTION = pystray.Menu(Item("Exit System Tray App", exit_app))
+
+
 def THERE_ONLY_CAN_BE_ONE():
   global EXIT_PYTHON
   RUNNING_TEST = subprocess.run(["ps -ef|grep python3|grep './{}'|grep -v grep|wc -l".format(SCRIPT)], shell=True, stdout=subprocess.PIPE).stdout
@@ -173,53 +185,62 @@ def service_status(qservice):
                     
                     LOCATION = find_config_distination()
                     tray_notifation(APP_NAME, 'Online ' + LOCATION)
-                    systray.menu = pystray.Menu(Item("Turn Off", vpn_off), Item('Change Location', CHOICE_LOCATIONS), Item(LOCATION, btn_return), Item("Exit", exit_app))
+                    systray.menu = pystray.Menu(Item("Turn Off", vpn_off), Item('Change Location', CHOICE_LOCATIONS), Item(LOCATION, btn_return), Item("Exit", EXIT_OPTION))
                     SLEEP = 2
-                    if os.geteuid() != 0:
+                        
+                    logging.debug(VPN_DEV)
+                    CONN = subprocess.run(["cat /sys/class/net/{}/carrier".format(VPN_DEV)], shell=True, stdout=subprocess.PIPE).stdout.decode('ascii').rstrip('\r\n')
+                    logging.debug(CONN)
+                    if IP_COMPARE == 'Enabled':
+                        if os.geteuid() != 0:
+                            time.sleep(6)
+                            if CONN == '1':
+                                EXT_IP = subprocess.run(["curl ipinfo.io/ip"], shell=True, stdout=subprocess.PIPE).stdout.decode('ascii').rstrip('\r\n')
+                                logging.debug(EXT_IP)
+
+                                ### Check IP Address of the Network to the Public Address
+                                CONFIG_IP = subprocess.run(["grep remote /opt/openvpn-proton/proton.conf|grep -v server|awk '{print $2}'|sed 's/[0-9]\\+/ /5'"], shell=True, stdout=subprocess.PIPE).stdout.decode('ascii').rstrip('\r\n')
+                                
+                                ### Come and clean this up
+                                qEXT_IP = EXT_IP.split(".")
+                                logging.debug('qEXT_IP ' + str(qEXT_IP))
+                                IP1 = qEXT_IP[0]
+                                IP2 = qEXT_IP[1]
+                                IP3 = qEXT_IP[2]
+                                qEXT_IP_final = str(IP1 + '.' + IP2 + '.' + IP3 + '.')
+                                
+                                ### Come and clean this up
+                                qCONFIG_IP = CONFIG_IP.split(".")
+                                logging.debug('qCONFIG_IP ' + str(qCONFIG_IP))
+                                IP1 = qCONFIG_IP[0]
+                                IP2 = qCONFIG_IP[1]
+                                IP3 = qCONFIG_IP[2]
+                                qCONFIG_IP_final = str(IP1 + '.' + IP2 + '.' + IP3 + '.')
+
+                                logging.debug('NET ' + str(qCONFIG_IP_final))
+                                logging.debug('NET ' + str(qEXT_IP_final))
+                                if qEXT_IP_final == qCONFIG_IP_final:
+                                    logging.debug('green')
+                                    icon_change('green')
+                                else:
+                                    logging.debug('red')
+                                    icon_change('red')
+                    else:
+                        ### IP_COMPARE is Disabled
                         time.sleep(6)
-                        logging.debug(VPN_DEV)
-                        CONN = subprocess.run(["cat /sys/class/net/{}/carrier".format(VPN_DEV)], shell=True, stdout=subprocess.PIPE).stdout.decode('ascii').rstrip('\r\n')
-                        logging.debug(CONN)
-                        if CONN == '1':
-                            EXT_IP = subprocess.run(["curl ipinfo.io/ip"], shell=True, stdout=subprocess.PIPE).stdout.decode('ascii').rstrip('\r\n')
-                            logging.debug(EXT_IP)
+                        EXT_IP = 'Disabled'
+                        logging.debug('EXT_IP Disabled: green')
+                        icon_change('green')
 
-                            ### Check IP Address of the Network to the Public Address
-                            CONFIG_IP = subprocess.run(["grep remote /opt/openvpn-proton/proton.conf|grep -v server|awk '{print $2}'|sed 's/[0-9]\\+/ /5'"], shell=True, stdout=subprocess.PIPE).stdout.decode('ascii').rstrip('\r\n')
-                            
-                            ### Come and clean this up
-                            qEXT_IP = EXT_IP.split(".")
-                            logging.debug('qEXT_IP ' + str(qEXT_IP))
-                            IP1 = qEXT_IP[0]
-                            IP2 = qEXT_IP[1]
-                            IP3 = qEXT_IP[2]
-                            qEXT_IP_final = str(IP1 + '.' + IP2 + '.' + IP3 + '.')
-                            
-                            ### Come and clean this up
-                            qCONFIG_IP = CONFIG_IP.split(".")
-                            logging.debug('qCONFIG_IP ' + str(qCONFIG_IP))
-                            IP1 = qCONFIG_IP[0]
-                            IP2 = qCONFIG_IP[1]
-                            IP3 = qCONFIG_IP[2]
-                            qCONFIG_IP_final = str(IP1 + '.' + IP2 + '.' + IP3 + '.')
-
-                            logging.debug('NET ' + str(qCONFIG_IP_final))
-                            logging.debug('NET ' + str(qEXT_IP_final))
-                            if qEXT_IP_final == qCONFIG_IP_final:
-                                logging.debug('green')
-                                icon_change('green')
-                            else:
-                                logging.debug('red')
-                                icon_change('red')
-
-                            #### Pull more data for Display
-                            ETH_IP = subprocess.run(["ifconfig tun0 |grep 'inet'|grep -v inet6|awk '{print $2}'"], shell=True, stdout=subprocess.PIPE).stdout.decode('ascii').rstrip('\r\n')
-                            logging.debug(ETH_IP)
-                            LOCATION = find_config_distination()
-                            systray.menu = pystray.Menu(Item("Turn Off", vpn_off), Item('Change Location', CHOICE_LOCATIONS), Item(LOCATION, btn_return), Item('Public IP: ' + EXT_IP, btn_return), Item('LAN: ' + ETH_IP, btn_return), Item("Exit", exit_app))
-                            ### Look up Cipher level
-                            CIPHER_LEVEL = subprocess.run(["grep cipher /opt/openvpn-proton/proton.conf|awk '{print $2}'"], shell=True, stdout=subprocess.PIPE).stdout.decode('ascii').rstrip('\r\n')
-                            systray.menu = pystray.Menu(Item("Turn Off", vpn_off), Item('Change Location', CHOICE_LOCATIONS), Item(LOCATION, btn_return), Item('Public IP: ' + EXT_IP, btn_return), Item('LAN: ' + ETH_IP, btn_return), Item(CIPHER_LEVEL, btn_return), Item("Exit", exit_app))
+                    if CONN == '1':
+                        #### Pull more data for Display
+                        ETH_IP = subprocess.run(["ifconfig tun0 |grep 'inet'|grep -v inet6|awk '{print $2}'"], shell=True, stdout=subprocess.PIPE).stdout.decode('ascii').rstrip('\r\n')
+                        logging.debug(ETH_IP)
+                        LOCATION = find_config_distination()
+                        systray.menu = pystray.Menu(Item("Turn Off", vpn_off), Item('Change Location', CHOICE_LOCATIONS), Item(LOCATION, btn_return), Item('Public IP: ' + EXT_IP, btn_return), Item('LAN: ' + ETH_IP, btn_return), Item("Exit", EXIT_OPTION))
+                        ### Look up Cipher level
+                        CIPHER_LEVEL = subprocess.run(["grep cipher /opt/openvpn-proton/proton.conf|awk '{print $2}'"], shell=True, stdout=subprocess.PIPE).stdout.decode('ascii').rstrip('\r\n')
+                        systray.menu = pystray.Menu(Item("Turn Off", vpn_off), Item('Change Location', CHOICE_LOCATIONS), Item(LOCATION, btn_return), Item('Public IP: ' + EXT_IP, btn_return), Item('LAN: ' + ETH_IP, btn_return), Item(CIPHER_LEVEL, btn_return), Item("Exit", EXIT_OPTION))
 
             else:
                 if service_state != 'offline':
@@ -227,18 +248,12 @@ def service_status(qservice):
                     icon_change('brown')
                     service_state = 'offline'
                     LOCATION = find_config_distination()
-                    systray.menu = pystray.Menu(Item("Turn On", vpn_restart), Item('Change Location', CHOICE_LOCATIONS), Item(LOCATION, btn_return), Item("Exit", exit_app))
+                    systray.menu = pystray.Menu(Item("Turn On", vpn_restart), Item('Change Location', CHOICE_LOCATIONS), Item(LOCATION, btn_return), Item("Exit", EXIT_OPTION))
                     time.sleep(2)
                     tray_notifation(APP_NAME, 'Offline')
                     SLEEP = 5
         except:
             continue
-            
-def exit_app(icon, item):
-    print('Exit called')
-    global EXIT_PYTHON
-    EXIT_PYTHON = 'TRUE'
-    sys.exit(0)
 
 def vpn_off():
     subprocess.run(["timeout 5 sudo systemctl stop {}".format(SERVICE)], shell=True, stdout=subprocess.PIPE)
@@ -286,7 +301,7 @@ def SystemTrayIcon():
     print('system tray')
     print(CHOICE_LOCATIONS)
     icon = PIL.Image.open(ICON_IMAGE_PURPLE)
-    smenu = pystray.Menu(Item("Off", vpn_off), Item('Change Location', CHOICE_LOCATIONS), Item("Restart", vpn_restart), Item("Exit", exit_app))
+    smenu = pystray.Menu(Item("Off", vpn_off), Item('Change Location', CHOICE_LOCATIONS), Item("Restart", vpn_restart), Item("Exit", EXIT_OPTION))
     global systray
     systray = pystray.Icon(name=APP_NAME, icon=icon, title='VPN', menu=smenu)
     try:
